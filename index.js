@@ -1,6 +1,7 @@
 const express = require("express");
 const connectDB = require("./config/db");
 
+// Set up express server and connect database
 const app = express();
 connectDB();
 
