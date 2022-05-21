@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { check, validationResult } = require("express-validator/check");
+const { check, validationResult } = require("express-validator");
 
 const auth = require("../../middleware/auth");
 const Profile = require("../../models/Profile");
@@ -21,6 +21,19 @@ router.get("/me", auth, async (req, res) => {
     }
 
     res.json(user);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// @route   GET api/profilee
+// @desc    Get all profiles
+// @access  Public
+router.get("/", async (req, res) => {
+  try {
+    const profiles = await Profile.find().populate("user", ["name", "avatar"]);
+    res.json(profiles);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
@@ -87,7 +100,7 @@ router.post(
       if (profile) {
         // Update
         profile = await Profile.findOneAndUpdate(
-          { user: user.req.user.id },
+          { user: req.user.id },
           { $set: profileFields },
           { new: true }
         );
